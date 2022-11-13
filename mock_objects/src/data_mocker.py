@@ -5,7 +5,7 @@ from pyspark.mllib.random import RandomRDDs
 from pyspark.sql import DataFrame, SparkSession, Window
 from pyspark.sql.functions import lit, row_number
 
-from src.mock_data_argparser import parse_args
+from utils.data_mocker_argparser import parse_args
 
 
 def generate_mock_binary_featureframe(
