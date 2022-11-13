@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "mock_data"
+version = "0.1.0"
+description = "Module used to build mock data and ML models to test streaming-prediction-service"
+authors = ["Otto von Sperling <otto@vonsperling.com.br>"]
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pyspark = "3.3.1"
+delta-spark = "2.1.1"
+numpy = "^1.23.4"
+pandas = "^1.5.1"
+pyarrow = "^10.0.0"
+
+
+[tool.poetry.group.dev.dependencies]
+ipython = "^8.6.0"
+isort = "^5.10.1"
+black = "^22.10.0"
+pylint = "^2.15.5"
+pytest = "^7.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
