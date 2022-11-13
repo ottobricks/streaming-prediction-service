@@ -1,4 +1,5 @@
-from pyspark import StorageLevel
+"""DataMocker module: generate mock data for streaming-prediction-service"""
+
 from pyspark.mllib.random import RandomRDDs
 from pyspark.sql import DataFrame, SparkSession, Window
 from pyspark.sql.functions import lit, row_number
@@ -15,12 +16,12 @@ def generate_mock_binary_featureframe(
     nfeatures_poisson_categorical: int,
     negative_class_proportion: float,
 ) -> int:
+    """Public interface to generate binary-perdiction-target data"""
     spark = SparkSession.builder.getOrCreate()
-    sc = spark.sparkContext
 
     poisson_features: DataFrame = (
         RandomRDDs.poissonVectorRDD(
-            sc, mean=5, numRows=nrows, numCols=nfeatures_poisson
+            spark.sparkContext, mean=5, numRows=nrows, numCols=nfeatures_poisson
         )
         .map(lambda row: [int(item) for item in row])
         .toDF([f"poisson_feature_{idx}" for idx in range(nfeatures_poisson)])
@@ -28,7 +29,7 @@ def generate_mock_binary_featureframe(
     )
 
     normal_features: DataFrame = (
-        RandomRDDs.normalVectorRDD(sc, numRows=nrows, numCols=nfeatures_normal)
+        RandomRDDs.normalVectorRDD(spark.sparkContext, numRows=nrows, numCols=nfeatures_normal)
         .map(lambda row: [float(item) for item in row])
         .toDF([f"normal_feature_{idx}" for idx in range(nfeatures_normal)])
         .withColumn("id", row_number().over(Window.orderBy(lit(1))))
@@ -36,7 +37,7 @@ def generate_mock_binary_featureframe(
 
     categorical_features: DataFrame = (
         RandomRDDs.poissonVectorRDD(
-            sc, mean=2, numRows=nrows, numCols=nfeatures_poisson_categorical
+            spark.sparkContext, mean=2, numRows=nrows, numCols=nfeatures_poisson_categorical
         )
         .map(lambda row: [chr(ord("@") + int(item)) for item in row])
         .toDF(
@@ -49,8 +50,8 @@ def generate_mock_binary_featureframe(
     )
 
     label_frame: DataFrame = (
-        RandomRDDs.uniformRDD(sc, nrows, seed=42)
-        .map(lambda item: [int(item > 0.8)])
+        RandomRDDs.uniformRDD(spark.sparkContext, nrows, seed=42)
+        .map(lambda item: [int(item > negative_class_proportion)])
         .toDF(["label"])
         .withColumn("id", row_number().over(Window.orderBy(lit(1))))
     )

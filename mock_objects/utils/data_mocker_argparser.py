@@ -1,3 +1,5 @@
+"""Module to parse CLI arguments to DataMocker module"""
+
 import argparse
 from argparse import ArgumentParser
 
@@ -37,7 +39,7 @@ def _add_binary_featureframe_generation_args(parser: ArgumentParser) -> Argument
         try:
             arg = float(arg)
         except ValueError as excpt:
-            raise argparse.ArgumentTypeError(f"Value '{arg}' is not a float.")
+            raise argparse.ArgumentTypeError(f"Value '{arg}' is not a float.") from excpt
         if not (arg > 0.0 and arg < 1.0):
             raise argparse.ArgumentError(
                 "--negative-class-proportion",
